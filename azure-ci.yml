@@ -1,16 +1,27 @@
-# File: templates/jobs.yml
 jobs:
-- job: Test
+- job: SAST & SCA
   steps:
   - script: pip install -r requirements.txt
   - script: pip install bandit safety
   - script: bandit -f json -o sast-result.json -r app.py || true
   - script: safety check -r requirements.txt --json > sca-result.json || true
-#   - powershell: gci env:* | sort-object name | Format-Table -AutoSize | Out-File $env:BUILD_ARTIFACTSTAGINGDIRECTORY/environment-variables.txt
+
+- job: Build Docker
+  steps:  
+  - script: docker build -t vulflask .
+
+- job: DAST Scan
+  steps:
+  - script: docker run -d -p 5050:5050 vulflask
+  - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
+  - script: sleep 60
+
+- job: Save artifacts
+  steps:  
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
-      contents: '*.json'
+      contents: '*.json, *.html'
       targetFolder: $(Build.ArtifactStagingDirectory)
   - task: PublishBuildArtifacts@1
     inputs:
