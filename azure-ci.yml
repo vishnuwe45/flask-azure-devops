@@ -1,19 +1,19 @@
 jobs:
-- job: sast_sca
-  steps:
-  - script: pip install -r requirements.txt
-  - script: pip install bandit safety
-  - script: bandit -f json -o sast-result.json -r app.py || true
-  - script: safety check -r requirements.txt --json > sca-result.json || true
-  - task: CopyFiles@2
-    inputs:
-      sourceFolder: '$(Build.SourcesDirectory)'
-      contents: '*.json'
-      targetFolder: $(Build.ArtifactStagingDirectory)
-  - task: PublishBuildArtifacts@1
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: sast_sca_results
+# - job: sast_sca
+#   steps:
+#   - script: pip install -r requirements.txt
+#   - script: pip install bandit safety
+#   - script: bandit -f json -o sast-result.json -r app.py || true
+#   - script: safety check -r requirements.txt --json > sca-result.json || true
+#   - task: CopyFiles@2
+#     inputs:
+#       sourceFolder: '$(Build.SourcesDirectory)'
+#       contents: '*.json'
+#       targetFolder: $(Build.ArtifactStagingDirectory)
+#   - task: PublishBuildArtifacts@1
+#     inputs:
+#       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#       artifactName: sast_sca_results
 
 - job: dast_scan
   pool:
@@ -21,11 +21,15 @@ jobs:
   steps:  
   - script: docker build -t vulflask .
   - script: docker run -d -p 5050:5050 vulflask
-  - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -it owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
+  - script: mkdir -p /zap/
+  - script: wget https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAP_2.8.0_Linux.tar.gz
+  - script: tar -xzvf ZAP_2.8.0_Linux.tar.gz -c /zap/
+  - script: pip install RESTinstance==1.0.0rc5 RoboZap==1.2
+  - script: robot Walkthrough.robot
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
-      contents: '*.html'
+      contents: '/robozapresults/*.json'
       targetFolder: $(Build.ArtifactStagingDirectory)
   - task: PublishBuildArtifacts@1
     inputs:
