@@ -8,22 +8,22 @@ jobs:
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
-      contents: '*.html'
+      contents: '*.json'
       targetFolder: $(Build.ArtifactStagingDirectory)
 
-- job: dast_scan
-  pool:
-    vmImage: 'ubuntu-16.04'
-  steps:  
-  - script: docker build -t vulflask .
-  - script: docker run -d -p 5050:5050 vulflask
-  - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
-  - script: sleep 60
-  - task: CopyFiles@2
-    inputs:
-      sourceFolder: '$(Build.SourcesDirectory)'
-      contents: '*.html'
-      targetFolder: $(Build.ArtifactStagingDirectory)
+# - job: dast_scan
+#   pool:
+#     vmImage: 'ubuntu-16.04'
+#   steps:  
+#   - script: docker build -t vulflask .
+#   - script: docker run -d -p 5050:5050 vulflask
+#   - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
+#   - script: sleep 60
+#   - task: CopyFiles@2
+#     inputs:
+#       sourceFolder: '$(Build.SourcesDirectory)'
+#       contents: '*.html'
+#       targetFolder: $(Build.ArtifactStagingDirectory)
 
 - job: save_artifacts
   steps:  
