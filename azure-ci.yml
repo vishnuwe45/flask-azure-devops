@@ -1,0 +1,8 @@
+# File: templates/jobs.yml
+jobs:
+- job: Test
+  steps:
+  - script: pip install -r requirements.txt
+  - script: pip install bandit safety
+  - script: bandit -f json -o sast-result.json -r app.py || true
+  - script: safety check -r requirements.txt --json > sca-result.json || true
