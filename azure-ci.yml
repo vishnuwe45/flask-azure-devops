@@ -6,3 +6,10 @@ jobs:
   - script: pip install bandit safety
   - script: bandit -f json -o sast-result.json -r app.py || true
   - script: safety check -r requirements.txt --json > sca-result.json || true
+
+- powershell: gci env:* | sort-object name | Format-Table -AutoSize | Out-File $env:BUILD_ARTIFACTSTAGINGDIRECTORY/environment-variables.txt
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: drop  
