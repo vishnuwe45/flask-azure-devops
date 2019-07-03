@@ -24,7 +24,7 @@ jobs:
   - script: mkdir -p /zap/
   - script: wget https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAP_2.8.0_Linux.tar.gz
   - script: tar -xzvf ZAP_2.8.0_Linux.tar.gz -C /zap/
-  - script: pip install robotframework RESTinstance==1.0.0rc5 RoboZap==1.2
+  - script: pip2 install robotframework RESTinstance==1.0.0rc5 RoboZap==1.2
   - script: robot Walkthrough.robot
   - task: CopyFiles@2
     inputs:
