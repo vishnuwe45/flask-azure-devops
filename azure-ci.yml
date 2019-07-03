@@ -21,8 +21,7 @@ jobs:
   steps:  
   - script: docker build -t vulflask .
   - script: docker run -d -p 5050:5050 vulflask
-  - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
-  - script: sleep 60
+  - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -it owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
