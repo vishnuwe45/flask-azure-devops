@@ -1,22 +1,22 @@
 jobs:
-- job: sast-and-sca
+- job: sast_sca
   steps:
   - script: pip install -r requirements.txt
   - script: pip install bandit safety
   - script: bandit -f json -o sast-result.json -r app.py || true
   - script: safety check -r requirements.txt --json > sca-result.json || true
 
-- job: build-docker
+- job: build_docker
   steps:  
   - script: docker build -t vulflask .
 
-- job: dast-scan
+- job: dast_scan
   steps:
   - script: docker run -d -p 5050:5050 vulflask
   - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
   - script: sleep 60
 
-- job: save-artifacts
+- job: save_artifacts
   steps:  
   - task: CopyFiles@2
     inputs:
