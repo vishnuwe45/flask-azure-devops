@@ -5,6 +5,11 @@ jobs:
   - script: pip install bandit safety
   - script: bandit -f json -o sast-result.json -r app.py || true
   - script: safety check -r requirements.txt --json > sca-result.json || true
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)'
+      contents: '*.html'
+      targetFolder: $(Build.ArtifactStagingDirectory)
 
 - job: dast_scan
   pool:
@@ -14,14 +19,14 @@ jobs:
   - script: docker run -d -p 5050:5050 vulflask
   - script: docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html  
   - script: sleep 60
-
-- job: save_artifacts
-  steps:  
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
-      contents: '*.json, *.html'
+      contents: '*.html'
       targetFolder: $(Build.ArtifactStagingDirectory)
+
+- job: save_artifacts
+  steps:  
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
