@@ -1,51 +1,51 @@
 jobs:
-# - job: sast_scan
-#   steps:  
-#   - script: pip install bandit
-#   - script: bandit -f json -o sast-result.json -r app.py || true
-#   - task: CopyFiles@2
-#     inputs:
-#       sourceFolder: '$(Build.SourcesDirectory)'
-#       contents: '*.json'
-#       targetFolder: $(Build.ArtifactStagingDirectory)
-#   - task: PublishBuildArtifacts@1
-#     inputs:
-#       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#       artifactName: sast_results
-
-# - job: sca_scan
-#   steps:  
-#   - script: pip install safety  
-#   - script: safety check -r requirements.txt --json > sca-result.json || true
-#   - task: CopyFiles@2
-#     inputs:
-#       sourceFolder: '$(Build.SourcesDirectory)'
-#       contents: '*.json'
-#       targetFolder: $(Build.ArtifactStagingDirectory)
-#   - task: PublishBuildArtifacts@1
-#     inputs:
-#       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#       artifactName: sca_results      
-
-- job: dast_scan
-  pool:
-    vmImage: 'ubuntu-16.04'
+- job: sast_scan
   steps:  
-  - script: docker build -t vulflask .
-  - script: docker run -d -p 5050:5050 vulflask && sleep 5 && docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html && sleep 30 &&  curl http://localhost:8080 && curl http://localhost:5050 && sleep 90
-#   - script: mkdir -p /zap/
-#   - script: wget https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAP_2.8.0_Linux.tar.gz
-#   - script: tar -xzvf ZAP_2.8.0_Linux.tar.gz -C /zap/
-#   - script: pip2 install -U pip
-#   - script: pip2 install robotframework RESTinstance==1.0.0rc5 RoboZap==1.2
-#   - script: robot Walkthrough.robot
+  - script: pip install bandit
+  - script: bandit -f json -o sast-result.json -r app.py || true
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
-      contents: '*.html'
+      contents: '*.json'
       targetFolder: $(Build.ArtifactStagingDirectory)
   - task: PublishBuildArtifacts@1
     inputs:
       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-      artifactName: dast_results
+      artifactName: sast_results
+
+- job: sca_scan
+  steps:  
+  - script: pip install safety  
+  - script: safety check -r requirements.txt --json > sca-result.json || true
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)'
+      contents: '*.json'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: sca_results      
+
+# - job: dast_scan
+#   pool:
+#     vmImage: 'ubuntu-16.04'
+#   steps:  
+#   - script: docker build -t vulflask .
+#   - script: docker run -d -p 5050:5050 vulflask && sleep 5 && docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html && sleep 30 &&  curl http://localhost:8080 && curl http://localhost:5050 && sleep 90
+# #   - script: mkdir -p /zap/
+# #   - script: wget https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAP_2.8.0_Linux.tar.gz
+# #   - script: tar -xzvf ZAP_2.8.0_Linux.tar.gz -C /zap/
+# #   - script: pip2 install -U pip
+# #   - script: pip2 install robotframework RESTinstance==1.0.0rc5 RoboZap==1.2
+# #   - script: robot Walkthrough.robot
+#   - task: CopyFiles@2
+#     inputs:
+#       sourceFolder: '$(Build.SourcesDirectory)'
+#       contents: '*.html'
+#       targetFolder: $(Build.ArtifactStagingDirectory)
+#   - task: PublishBuildArtifacts@1
+#     inputs:
+#       pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#       artifactName: dast_results
  
