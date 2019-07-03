@@ -32,7 +32,7 @@ jobs:
     vmImage: 'ubuntu-16.04'
   steps:  
   - script: docker build -t vulflask .
-  - script: docker run -d -p 5050:5050 vulflask && sleep 5 && docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html &&  curl http://localhost:8090 && curl http://localhost:5050 && sleep 90
+  - script: docker run -d -p 5050:5050 vulflask && sleep 5 && docker run --network=host -u root -v $(pwd):/zap/wrk/:rw -p 8090:8080 -d owasp/zap2docker-stable zap-baseline.py -t http://localhost:5050 -r zap.html &&  curl http://localhost:8090 && curl http://localhost:5050 && sleep 90
 #   - script: mkdir -p /zap/
 #   - script: wget https://github.com/zaproxy/zaproxy/releases/download/v2.8.0/ZAP_2.8.0_Linux.tar.gz
 #   - script: tar -xzvf ZAP_2.8.0_Linux.tar.gz -C /zap/
