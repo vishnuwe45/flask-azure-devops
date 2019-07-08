@@ -16,7 +16,7 @@ jobs:
 - job: sca_scan
   steps:  
   - script: pip install safety  
-  - script: safety check -r requirements.txt --json > sca-result.json
+  - script: safety check
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
