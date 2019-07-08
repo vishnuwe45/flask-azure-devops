@@ -2,7 +2,7 @@ jobs:
 - job: sast_scan
   steps:  
   - script: pip install bandit
-  - script: bandit -f json -o sast-result.json -r app.py || true
+  - script: bandit -f json -o sast-result.json -r app.py
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
@@ -16,7 +16,7 @@ jobs:
 - job: sca_scan
   steps:  
   - script: pip install safety  
-  - script: safety check -r requirements.txt --json > sca-result.json || true
+  - script: safety check -r requirements.txt --json > sca-result.json
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
