@@ -1,7 +1,10 @@
 jobs:
 - job: sast_scan
-  steps:  
-  - script: pip install bandit
+  steps: 
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.6' 
+  - script: python -m pip install bandit
   - script: bandit -f json -o sast-result.json -r app.py || true
   - task: CopyFiles@2
     inputs:
@@ -14,8 +17,11 @@ jobs:
       artifactName: sast_results
 
 - job: sca_scan
-  steps:  
-  - script: pip install pyraider  
+  steps:    
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.6' 
+  - script: python -m pip install pyraider  
   - script: pyraider check -f requirements.txt -e json sca-results.json || true
   - task: CopyFiles@2
     inputs:
