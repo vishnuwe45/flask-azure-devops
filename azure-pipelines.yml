@@ -15,8 +15,8 @@ jobs:
 
 - job: sca_scan
   steps:  
-  - script: pip install safety  
-  - script: safety check -r requirements.txt --json > sca-result.json || true
+  - script: pip install pyraider  
+  - script: pyraider check -f requirements.txt -e json sca-results.json || true
   - task: CopyFiles@2
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)'
