@@ -12,5 +12,6 @@ def upload():
 		data = yaml.load(file.read())
 		return render_template("index.html",data=data)
 
+
 if __name__ == "__main__":
     app.run('0.0.0.0',5000)
