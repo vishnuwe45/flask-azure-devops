@@ -1,6 +1,5 @@
 jobs:
 - job: sast_scan
-  pool: Default
   steps: 
   - task: UsePythonVersion@0
     inputs:
@@ -18,7 +17,6 @@ jobs:
       artifactName: sast_results
 
 - job: sca_scan
-  pool: Default
   steps:    
   - task: UsePythonVersion@0
     inputs:
